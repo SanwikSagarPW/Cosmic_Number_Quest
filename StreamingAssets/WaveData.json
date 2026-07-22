@@ -1,0 +1,235 @@
+{
+    "waveSets": [
+        {
+            "id": "Level1_Single_Step_Substitution",
+            "spawnWaves": 10,
+            "randomWaves": true,
+            "waves": [
+                {
+                    "display": "x + 5, x = 7",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "10", "11", "13" ],
+                    "correct": [ "12" ]
+                },
+                {
+                    "display": "a + 3, a = 23",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "24", "25", "27" ],
+                    "correct": [ "26" ]
+                },
+                {
+                    "display": "y - 4, y = 15",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "9", "10", "12" ],
+                    "correct": [ "11" ]
+                },
+                {
+                    "display": "n + 8, n = 6",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "12", "13", "15" ],
+                    "correct": [ "14" ]
+                },
+                {
+                    "display": "p - 5, p = 18",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "11", "12", "14" ],
+                    "correct": [ "13" ]
+                },
+                {
+                    "display": "2x, x = 9",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "16", "17", "20" ],
+                    "correct": [ "18" ]
+                },
+                {
+                    "display": "3a, a = 5",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "10", "12", "18" ],
+                    "correct": [ "15" ]
+                },
+                {
+                    "display": "4n, n = 6",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "20", "22", "26" ],
+                    "correct": [ "24" ]
+                },
+                {
+                    "display": "k + 10, k = 11",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "19", "20", "22" ],
+                    "correct": [ "21" ]
+                },
+                {
+                    "display": "m - 7, m = 20",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "11", "12", "14" ],
+                    "correct": [ "13" ]
+                }
+            ]
+        },
+        {
+            "id": "Level2_Two_Step_Expression_Strike",
+            "spawnWaves": 10,
+            "randomWaves": true,
+            "waves": [
+                {
+                    "display": "5m + 3, m = 2",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "11", "12", "15" ],
+                    "correct": [ "13" ]
+                },
+                {
+                    "display": "3s - 2, s = 7",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "15", "17", "21" ],
+                    "correct": [ "19" ]
+                },
+                {
+                    "display": "2r + 1, r = 8",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "15", "16", "18" ],
+                    "correct": [ "17" ]
+                },
+                {
+                    "display": "7k, k = 4",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "24", "26", "30" ],
+                    "correct": [ "28" ]
+                },
+                {
+                    "display": "10 - a, a = -4",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "6", "10", "16" ],
+                    "correct": [ "14" ]
+                },
+                {
+                    "display": "6p + 2, p = 3",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "18", "22", "24" ],
+                    "correct": [ "20" ]
+                },
+                {
+                    "display": "4x - 5, x = 6",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "17", "18", "20" ],
+                    "correct": [ "19" ]
+                },
+                {
+                    "display": "8y + 4, y = 2",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "16", "18", "22" ],
+                    "correct": [ "20" ]
+                },
+                {
+                    "display": "9q - 6, q = 4",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "28", "32", "36" ],
+                    "correct": [ "30" ]
+                },
+                {
+                    "display": "11t + 1, t = 3",
+                    "spawnStyle": "normal",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "31", "32", "36" ],
+                    "correct": [ "34" ]
+                }
+            ]
+        },
+        {
+            "id": "Level3_Bracket_Two_Letter_Challenge",
+            "spawnWaves": 10,
+            "randomWaves": true,
+            "waves": [
+                {
+                    "display": "3(m + 1), m = 4",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "12", "18", "20" ],
+                    "correct": [ "15" ]
+                },
+                {
+                    "display": "2f - 2g, f = 3, g = 1",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "2", "6", "8" ],
+                    "correct": [ "4" ]
+                },
+                {
+                    "display": "2t + b, t = 4, b = 3",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "9", "10", "12" ],
+                    "correct": [ "11" ]
+                },
+                {
+                    "display": "h - (3 - n), h = 5, n = 6",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "6", "7", "9" ],
+                    "correct": [ "8" ]
+                },
+                {
+                    "display": "4(x + y), x = 2, y = 3",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "16", "18", "24" ],
+                    "correct": [ "20" ]
+                },
+                {
+                    "display": "10y - 3, y = 7",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "57", "70", "73" ],
+                    "correct": [ "67" ]
+                },
+                {
+                    "display": "10(y - 3), y = 7",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "30", "50", "67" ],
+                    "correct": [ "40" ]
+                },
+                {
+                    "display": "3a + 2b, a = 4, b = 5",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "18", "20", "24" ],
+                    "correct": [ "22" ]
+                },
+                {
+                    "display": "5u, u = 8",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "13", "35", "45" ],
+                    "correct": [ "40" ]
+                },
+                {
+                    "display": "5 + u, u = 8",
+                    "spawnStyle": "zig-zac",
+                    "destroyStyle": "chainBlast",
+                    "elements": [ "35", "40", "45" ],
+                    "correct": [ "13" ]
+                }
+            ]
+        }
+    ]
+}

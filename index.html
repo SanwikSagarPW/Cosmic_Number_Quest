@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Cosmic Addition</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap"></noscript>
+    <link rel="preload" href="Build/Asteroid_destroyer.loader.js" as="script">
+    <link rel="preload" href="Build/Asteroid_destroyer.framework.js" as="script">
+    <link rel="preload" href="Build/Asteroid_destroyer.data.gz" as="fetch" crossorigin>
+    <link rel="preload" href="Build/Asteroid_destroyer.wasm.gz" as="fetch" crossorigin>
+    <style>
+      
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+      
+      html, body {
+          background: #000; /* Black background for letterboxing */
+          font-family: 'Roboto', sans-serif;
+          overflow: hidden;
+          width: 100%;
+          height: 100%;
+      }
+
+      #page-container {
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 1) 0%, rgba(0.1,0.1, 0.1, 0.5) 100%);
+      }
+      
+      #controls {
+          display: none;
+      }
+      
+      .title-section { display: flex; align-items: center; gap: clamp(8px, 2vw, 20px); }
+      
+      .game-logo {
+          width: clamp(28px, 4vw, 40px);
+          height: clamp(28px, 4vw, 40px);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: clamp(6px, 1vw, 10px);
+          display: flex; align-items: center;
+          justify-content: center;
+          font-size: clamp(18px, 3vw, 24px);
+          color: white;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 1);
+      }
+      
+      .game-title {
+          color: white; font-family: 'Bebas Neue', cursive;
+          font-size: clamp(18px, 3vw, 32px);
+          letter-spacing: clamp(1px, 0.2vw, 3px);
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      
+      .btn-group { display: flex; gap: clamp(6px, 1.5vw, 15px); align-items: center; flex-wrap: nowrap; }
+      
+      button {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white; border: none;
+          padding: clamp(5px, 1vh, 10px) clamp(8px, 2vw, 18px);
+          border-radius: clamp(15px, 2.5vw, 25px);
+          cursor: pointer;
+          font-size: clamp(10px, 1.5vw, 14px);
+          font-weight: 600; text-transform: uppercase;
+          letter-spacing: clamp(0.3px, 0.08vw, 1px);
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          display: flex; align-items: center;
+          white-space: nowrap;
+      }
+      
+      button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+      
+      .btn-secondary {
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      
+      .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+      .icon { font-size: clamp(10px, 1.5vw, 16px); margin-right: clamp(3px, 0.8vw, 8px); }
+
+      #unity-container {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #unity-canvas {
+        background: #000;
+      }
+
+      #loading-overlay {
+          position: fixed; top: 0; left: 0;
+          width: 100%; height: 100%;
+          background: rgba(0, 0, 0, 0.8); color: white;
+          display: flex; justify-content: center; align-items: center;
+          font-family: Arial, sans-serif; font-size: 2em; z-index: 99;
+      }
+    </style>
+    <script>
+      /* ─── Level-Wise Analytics Bridge ─── */
+      (function () {
+        var GAME_ID = 'cosmic-addition';
+
+        function generateRunId() {
+          return 'run-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        var currentRunId = generateRunId();
+        var sessionName = (new URLSearchParams(window.location.search).get('sessionName')) ||
+                          ('Session_' + Date.now());
+
+        function parseLevelNumber(levelId, fallbackIdx) {
+          var m = String(levelId || '').match(/(\d+)/);
+          return m ? parseInt(m[1], 10) : (fallbackIdx + 1);
+        }
+
+        function cleanLevel(raw, levelNumber) {
+          return {
+            levelNumber: levelNumber,
+            levelId: raw.levelId || String(levelNumber),
+            successful: !!raw.successful,
+            timeTaken: raw.timeTaken || 0,
+            xpEarned: raw.xpEarned || 0,
+            tasks: raw.tasks || []
+          };
+        }
+
+        function dispatch(payload) {
+          // 1. real ReactNativeWebView (captured before our proxy)
+          if (window.__rnwv_real && typeof window.__rnwv_real.postMessage === 'function') {
+            try { window.__rnwv_real.postMessage(JSON.stringify(payload)); } catch (e) {}
+          }
+          // 2. parent frame / WebView host
+          try { window.parent.postMessage(payload, window.__analyticsParentOrigin || '*'); } catch (e) {}
+          // 3. myJsAnalytics site-local bridge
+          try {
+            if (window.myJsAnalytics && typeof window.myJsAnalytics.trackGameSession === 'function') {
+              window.myJsAnalytics.trackGameSession(payload);
+            }
+          } catch (e) {}
+        }
+
+        function transformAndDispatch(legacy) {
+          var levels = (legacy.diagnostics && legacy.diagnostics.levels) || [];
+          if (!levels.length) { dispatch(legacy); return; }
+
+          var runHighest = 0;
+          levels.forEach(function (raw, idx) {
+            var levelNumber = parseLevelNumber(raw.levelId, idx);
+            var levelObj    = cleanLevel(raw, levelNumber);
+            runHighest      = Math.max(runHighest, levelNumber);
+
+            dispatch({
+              gameId:             GAME_ID,
+              name:               legacy.name || sessionName,
+              runId:              currentRunId,
+              highestLevelPlayed: runHighest,
+              xpEarned:           levelObj.xpEarned,
+              xpEarnedTotal:      levelObj.xpEarned,
+              level:              levelObj,
+              diagnostics:        { levels: [levelObj] },
+              rawData:            legacy.rawData || []
+            });
+          });
+        }
+
+        // Capture real ReactNativeWebView before Unity loads, then install proxy.
+        window.__rnwv_real = window.ReactNativeWebView || null;
+        window.ReactNativeWebView = {
+          postMessage: function (data) {
+            try {
+              var parsed = typeof data === 'string' ? JSON.parse(data) : data;
+              transformAndDispatch(parsed);
+            } catch (e) {
+              console.error('[AnalyticsBridge] Failed to process payload:', e);
+              if (window.__rnwv_real) window.__rnwv_real.postMessage(data);
+            }
+          }
+        };
+
+        // Host handshake — lets the app inject sessionName / parentOrigin / runId.
+        window.addEventListener('message', function (ev) {
+          try {
+            var msg = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data;
+            if (!msg || msg.type !== 'ANALYTICS_CONFIG') return;
+            if (msg.parentOrigin) window.__analyticsParentOrigin = msg.parentOrigin;
+            if (msg.runId)        currentRunId  = msg.runId;
+            if (msg.sessionName)  sessionName   = msg.sessionName;
+            // Re-capture ReactNativeWebView if host injected it after our proxy
+            if (msg.rnwvAvailable) window.__rnwv_real = window.ReactNativeWebView;
+          } catch (e) {}
+        });
+
+        // Called by the game if the user starts a brand-new run (e.g. restart from menu).
+        window.__newAnalyticsRun = function () { currentRunId = generateRunId(); };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="page-container">
+      <div id="controls">
+          <div class="title-section">
+              <div class="game-logo">🚀</div>
+              <h1 class="game-title">Cosmic Addition</h1>
+          </div>
+          <div class="btn-group">
+              <button id="fullscreen-button" onclick="toggleFullscreen()">
+                  <span class="icon">⛶</span><span>Fullscreen</span>
+              </button>
+              <button class="btn-secondary" onclick="restartGame()">
+                  <span class="icon">🔄</span><span>Restart</span>
+              </button>
+          </div>
+      </div>
+
+      <div id="unity-container">
+        <canvas id="unity-canvas" tabindex="-1"></canvas>
+      </div>
+    </div>
+
+    <div id="loading-overlay">
+      <div id="loading-text">Loading... 0%</div>
+    </div>
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+
+      var GZ_SIZES = {
+        'Asteroid_destroyer.data': 19361680,
+        'Asteroid_destroyer.wasm': 48955517
+      };
+
+      async function decompressGzip(buffer) {
+        var ds = new DecompressionStream('gzip');
+        var writer = ds.writable.getWriter();
+        writer.write(buffer); writer.close();
+        var reader = ds.readable.getReader();
+        var chunks = [], total = 0;
+        while (true) {
+          var r = await reader.read();
+          if (r.done) break;
+          chunks.push(r.value); total += r.value.length;
+        }
+        var out = new Uint8Array(total), offset = 0;
+        for (var i = 0; i < chunks.length; i++) { out.set(chunks[i], offset); offset += chunks[i].length; }
+        return out.buffer;
+      }
+
+      if (typeof DecompressionStream !== 'undefined') {
+        var _fetch = window.fetch.bind(window);
+        window.fetch = async function(url, opts) {
+          var urlStr = (typeof url === 'string') ? url : (url.url || '');
+          var match = urlStr.match(/\/(Asteroid_destroyer\.(data|wasm))(\?|$)/);
+          if (match) {
+            var filename = match[1];
+            var gzUrl = urlStr.replace(filename, filename + '.gz');
+            var resp = await _fetch(gzUrl, opts);
+            if (resp.ok) {
+              var compressed = await resp.arrayBuffer();
+              var decompressed = await decompressGzip(new Uint8Array(compressed));
+              var ct = filename.endsWith('.wasm') ? 'application/wasm' : 'application/octet-stream';
+              return new Response(decompressed, {
+                status: 200,
+                headers: {
+                  'Content-Type': ct,
+                  'Content-Length': String(GZ_SIZES[filename] || decompressed.byteLength)
+                }
+              });
+            }
+          }
+          return _fetch(url, opts);
+        };
+
+        WebAssembly.instantiateStreaming = async function(responsePromise, imports) {
+          var buf = await (await responsePromise).arrayBuffer();
+          return WebAssembly.instantiate(buf, imports);
+        };
+      }
+
+      var pageContainer = document.querySelector("#page-container");
+      var unityContainer = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingOverlay = document.querySelector("#loading-overlay");
+      var loadingText = document.querySelector("#loading-text");
+
+      function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+              pageContainer.requestFullscreen().catch(err => {
+                  alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+              });
+          } else {
+              document.exitFullscreen();
+          }
+      }
+
+      function restartGame() {
+          location.reload();
+      }
+
+      // --- [FINAL UNIVERSAL DYNAMIC] SCALING LOGIC ---
+      function applyLetterboxing() {
+          // Use the reliable CSS media query to check orientation.
+          const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+          const targetAspectRatio = isPortrait ? (9 / 16) : (16 / 9);
+
+          let containerWidth = unityContainer.offsetWidth;
+          let containerHeight = unityContainer.offsetHeight;
+          let containerAspectRatio = containerWidth / containerHeight;
+          
+          let newWidth, newHeight;
+          
+          if (containerAspectRatio > targetAspectRatio) {
+              newHeight = containerHeight;
+              newWidth = newHeight * targetAspectRatio;
+          } else {
+              newWidth = containerWidth;
+              newHeight = newWidth / targetAspectRatio;
+          }
+
+          // Round the final CSS size to prevent resize feedback loops.
+          const finalWidth = Math.round(newWidth);
+          const finalHeight = Math.round(newHeight);
+          
+          canvas.style.width = finalWidth + 'px';
+          canvas.style.height = finalHeight + 'px';
+
+          // Apply a DYNAMIC internal resolution for ALL devices.
+          // This ensures sharpness and correct scaling on any screen.
+          const dpr = window.devicePixelRatio || 1;
+          canvas.width = Math.round(finalWidth * dpr);
+          canvas.height = Math.round(finalHeight * dpr);
+      }
+
+      window.addEventListener('resize', applyLetterboxing);
+      window.addEventListener('orientationchange', applyLetterboxing);
+
+      function unityShowBanner(msg, type) {
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        div.style.position = 'absolute';
+        div.style.top = '10px';
+        div.style.left = '10px';
+        div.style.padding = '10px';
+        div.style.color = 'white';
+        if (type == 'error') {
+            div.style.background = 'red';
+        } else if (type == 'warning') {
+            div.style.background = 'yellow';
+            div.style.color = 'black';
+        } else {
+            div.style.background = 'rgba(0,0,0,0.5)';
+        }
+        pageContainer.appendChild(div);
+        if (type != 'error') {
+          setTimeout(function() {
+            pageContainer.removeChild(div);
+          }, 5000);
+        }
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Asteroid_destroyer.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/Asteroid_destroyer.data",
+        frameworkUrl: buildUrl + "/Asteroid_destroyer.framework.js",
+        codeUrl: buildUrl + "/Asteroid_destroyer.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "AstroidDestroyer",
+        productVersion: "1.1",
+        showBanner: unityShowBanner,
+      };
+      
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          loadingText.innerHTML = `Loading... ${Math.round(progress * 100)}%`;
+        }).then((unityInstance) => {
+          loadingOverlay.style.display = 'none';
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      
+      // Auto-enter fullscreen on page load
+      document.addEventListener('click', function enterFullscreen() {
+          if (!document.fullscreenElement) {
+              pageContainer.requestFullscreen().catch(err => {
+                  console.log('Fullscreen request failed:', err);
+              });
+          }
+          document.removeEventListener('click', enterFullscreen);
+      }, { once: true });
+
+      document.addEventListener('fullscreenchange', () => {
+          setTimeout(applyLetterboxing, 150); 
+      });
+
+      applyLetterboxing(); 
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
